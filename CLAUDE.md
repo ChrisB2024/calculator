@@ -4,7 +4,14 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-Fresh `create-next-app` scaffold. The calculator itself is not built yet: `app/page.tsx` is still the template page.
+A calculator on the home page that saves every successful calculation to Supabase.
+
+## Architecture
+
+- `app/page.tsx` is a server component that renders the client component `app/calculator.tsx`. That component holds all the calculator state, the button and keyboard input, and the history list.
+- `lib/evaluate.ts` is a recursive-descent parser: precedence, parentheses and unary minus. Never use `eval()`. It throws on malformed input or ÷0, and errors are shown in the UI but not saved.
+- `lib/supabase.ts` is a browser Supabase client built from `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in `.env.local`. It throws at import if they're missing. The table is `calcs (id, expression text, result text, created_at)`; RLS allows insert and select for the publishable key. The page shows the 10 newest rows.
+- Expressions are stored with ASCII operators (`* / -`). The UI shows `× ÷ −` through `pretty()`.
 
 ## Stack
 
